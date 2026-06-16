@@ -1,0 +1,7 @@
+<h2>Tenant Management</h2>
+<button (click)="logout()">Logout</button>
+<ul>
+  <li *ngFor="let tenant of tenants">
+    {{tenant.name}} - {{tenant.domain}}
+  </li>
+</ul>

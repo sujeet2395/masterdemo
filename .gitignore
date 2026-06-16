@@ -1,0 +1,15 @@
+# Ignore IDE and build files
+.github
+.vscode
+.idea
+target
+*.iml
+*.log
+# Node.js dependencies
+node_modules/
+# Angular build output
+dist/
+.angular/
+.agents/
+.ai/
+projects_learning_docs/
