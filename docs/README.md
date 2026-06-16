@@ -8,7 +8,7 @@ The backend is built with Spring Boot, providing REST APIs for tenant management
 
 ### Running the Backend
 
-1. Navigate to the `backend` directory.
+1. Navigate to the `saas-backend` directory.
 2. Run `mvn spring-boot:run`.
 
 The backend will start on port 8080.

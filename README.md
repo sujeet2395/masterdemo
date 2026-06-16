@@ -4,7 +4,7 @@ This project provides a complete multi-tenant SaaS platform with backend and fro
 
 ## Project Structure
 
-- `backend/` - Java Spring Boot application
+- `saas-backend/` - Java Spring Boot application
 - `frontend/` - Angular application
 - `database/` - SQL schema
 - `docs/` - Documentation

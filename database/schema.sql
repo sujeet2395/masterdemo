@@ -24,8 +24,8 @@ CREATE TABLE users (
 
 -- Insert sample data
 INSERT INTO organizations (name, description) VALUES ('Simple Agent Corp', 'Simple Agent is Sample organization for demo');
-INSERT INTO tenants (name, domain, organization_id) VALUES ('Simple Agent', 'simpleagent.example.com', 1);
-INSERT INTO users (username, email, password, tenant_id) VALUES ('SuperAdmin', 'superadmin@simpleagent.example.com', 'password', 1);
+INSERT INTO tenants (name, domain, organization_id) VALUES ('Simple Agent', 'simpleagent.masterdemo.com', 1);
+INSERT INTO users (username, email, password, tenant_id) VALUES ('SuperAdmin', 'superadmin@simpleagent.masterdemo.com', 'password', 1);
 
 -- Query to verify data insertion
 select * from organizations;
