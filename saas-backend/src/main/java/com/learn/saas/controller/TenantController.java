@@ -1,6 +1,7 @@
 package com.learn.saas.controller;
 
 import com.learn.saas.entity.Tenant;
+import com.learn.saas.entity.TenantDto;
 import com.learn.saas.service.TenantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -67,7 +68,7 @@ public class TenantController {
             description = "Unauthorized - invalid or missing JWT token"
         )
     })
-    public ResponseEntity<Tenant> getTenantById(
+    public ResponseEntity<TenantDto> getTenantById(
             @Parameter(description = "Tenant ID", example = "1")
             @PathVariable Long id) {
         return tenantService.getTenantById(id)

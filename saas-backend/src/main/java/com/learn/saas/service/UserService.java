@@ -1,6 +1,8 @@
 package com.learn.saas.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,8 @@ public class UserService {
     /**
      * Register a user by SuperAdmin (can create any role)
      */
+    //@CacheEvict(cacheNames = "userByUsername", key = "#username")
+    //@CacheEvict(cacheNames = "usersByTenant", key = "#tenantId", condition = "#tenantId != null")
     public User registerBySuperAdmin(String username, String email, String password, String role, Long tenantId) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("User already exists");
@@ -51,6 +55,8 @@ public class UserService {
     /**
      * Register a user by OrgAdmin (can only create USER role for their tenant)
      */
+    //@CacheEvict(cacheNames = "userByUsername", key = "#username")
+    //@CacheEvict(cacheNames = "usersByTenant", key = "#tenantId")
     public User registerByOrgAdmin(String username, String email, String password, Long tenantId) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("User already exists");
@@ -73,6 +79,7 @@ public class UserService {
     /**
      * Get all users in a tenant
      */
+    @Cacheable(cacheNames = "usersByTenant", key = "#tenantId")
     public List<User> getUsersByTenant(Long tenantId) {
         return userRepository.findByTenantId(tenantId);
     }
@@ -80,6 +87,7 @@ public class UserService {
     /**
      * Get a user by username
      */
+    @Cacheable(cacheNames = "userByUsername", key = "#username")
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
