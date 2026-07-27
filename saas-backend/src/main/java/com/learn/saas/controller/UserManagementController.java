@@ -191,4 +191,40 @@ public class UserManagementController {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @Operation(
+        summary = "Update User",
+        description = "Update a user account by admin or superadmin"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User updated successfully"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad request - invalid user data"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - invalid or missing JWT token"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden - user does not have required role"
+        )
+    })
+    public ResponseEntity<?> updateUser(
+            @Parameter(description = "User ID", example = "1")
+            @PathVariable Long id,
+            @RequestBody UserRegistrationRequest request) {
+        try {
+            User updatedUser = userService.updateUser(id, request.getEmail(), request.getRole());
+            return ResponseEntity.ok("User updated successfully: " + updatedUser.getUsername());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body("Error: " + e.getMessage());
+        }
+    }
 }

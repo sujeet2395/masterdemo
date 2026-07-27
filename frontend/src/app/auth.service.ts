@@ -47,6 +47,49 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
+  getTokenPayload(): any | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    try {
+      const payload = atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(payload);
+    } catch {
+      return null;
+    }
+  }
+
+  getUsername(): string | null {
+    const payload = this.getTokenPayload();
+    return payload?.sub || payload?.username || null;
+  }
+
+  getUserRole(): string | null {
+    const payload = this.getTokenPayload();
+    if (!payload || !payload.role) {
+      return null;
+    }
+    return payload.role.startsWith('ROLE_') ? payload.role.replace('ROLE_', '') : payload.role;
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    const role = this.getUserRole();
+    if (!role || !roles?.length) {
+      return false;
+    }
+    return roles.some(allowed => {
+      const normalized = allowed.startsWith('ROLE_') ? allowed.replace('ROLE_', '') : allowed;
+      return role === normalized;
+    });
+  }
+
   private hasToken(): boolean {
     return !!localStorage.getItem(this.tokenKey);
   }

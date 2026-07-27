@@ -1,7 +1,95 @@
-<h2>Tenant Management</h2>
-<button (click)="logout()">Logout</button>
-<ul>
-  <li *ngFor="let tenant of tenants">
-    {{tenant.name}} - {{tenant.domain}}
-  </li>
-</ul>
+<div class="page-shell">
+  <header class="hero-card">
+    <div>
+      <p class="eyebrow">SaaS Control Center</p>
+      <h2>Tenant management</h2>
+      <p>Monitor and manage your connected tenants through the backend API with a cleaner SaaS-style view.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="secondary-btn" type="button" (click)="openCreateForm()">＋ New tenant</button>
+      <button class="secondary-btn" type="button" (click)="loadTenants()" [disabled]="isLoading">↻ Refresh</button>
+      <button class="ghost-btn" type="button" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span class="label">Total tenants</span>
+      <strong>{{ totalTenants }}</strong>
+      <small>from backend API</small>
+    </div>
+    <div class="stat-card">
+      <span class="label">Active tenants</span>
+      <strong>{{ activeTenants }}</strong>
+      <small>ready for service</small>
+    </div>
+    <div class="stat-card">
+      <span class="label">Sync status</span>
+      <strong>{{ lastUpdated ? 'Live' : 'Pending' }}</strong>
+      <small>{{ lastUpdated || 'Waiting for first sync' }}</small>
+    </div>
+  </section>
+
+  <section class="content-card">
+    <div class="content-header">
+      <div>
+        <h3>Connected tenants</h3>
+        <p>{{ lastUpdated ? 'Last synced ' + lastUpdated : 'Waiting for data...' }}</p>
+      </div>
+      <div class="search-box">
+        <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Search tenant or domain" />
+      </div>
+    </div>
+
+    <div *ngIf="showForm" class="form-card">
+      <div class="form-header">
+        <h3>{{ isEditing ? 'Edit tenant' : 'Create tenant' }}</h3>
+        <button class="ghost-btn" type="button" (click)="closeForm()">Close</button>
+      </div>
+
+      <form (ngSubmit)="saveTenant()" #tenantForm="ngForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="tenantName">Tenant name</label>
+            <input id="tenantName" name="name" [(ngModel)]="tenantDraft.name" required placeholder="Acme Corporation" />
+          </div>
+          <div class="form-group">
+            <label for="tenantDomain">Domain</label>
+            <input id="tenantDomain" name="domain" [(ngModel)]="tenantDraft.domain" placeholder="acme.example.com" />
+          </div>
+        </div>
+
+        <div *ngIf="error" class="state-box error">{{ error }}</div>
+
+        <div class="form-actions">
+          <button class="ghost-btn" type="button" (click)="closeForm()">Cancel</button>
+          <button class="secondary-btn" type="submit" [disabled]="isSaving">
+            {{ isSaving ? 'Saving...' : (isEditing ? 'Update tenant' : 'Create tenant') }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="isLoading" class="state-box loading">Loading tenants from the SaaS backend API...</div>
+    <div *ngIf="error && !isLoading && !showForm" class="state-box error">{{ error }}</div>
+    <div *ngIf="!isLoading && !error && filteredTenants.length === 0" class="state-box empty">No tenants match your search.</div>
+
+    <div *ngIf="!isLoading && !error && filteredTenants.length > 0" class="tenant-grid">
+      <article class="tenant-card" *ngFor="let tenant of filteredTenants">
+        <div class="tenant-top">
+          <span class="status-pill">Active</span>
+          <span class="tenant-id">#{{ tenant.id }}</span>
+        </div>
+        <h4>{{ tenant.name }}</h4>
+        <p class="domain">{{ tenant.domain }}</p>
+        <div class="tenant-footer">
+          <span>Secure API connection</span>
+          <div class="tenant-actions">
+            <button class="mini-btn" type="button" [routerLink]="['/tenants', tenant.id, 'users']">Manage users</button>
+            <button class="mini-btn" type="button" (click)="openEditForm(tenant)">Edit tenant</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

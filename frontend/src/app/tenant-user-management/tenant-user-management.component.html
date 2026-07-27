@@ -1,0 +1,79 @@
+<div class="page-shell">
+  <header class="hero-card">
+    <div>
+      <p class="eyebrow">Tenant user management</p>
+      <h2>Users for tenant #{{ tenantId }}</h2>
+      <p>Manage users belonging to this tenant. Only tenant admins and superadmins can access this page.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="secondary-btn" type="button" (click)="openNewUserForm()">＋ New user</button>
+      <button class="secondary-btn" type="button" (click)="loadUsers()">↻ Refresh</button>
+      <button class="ghost-btn" type="button" routerLink="/tenants">← Back to tenants</button>
+    </div>
+  </header>
+
+  <section class="content-card">
+    <div *ngIf="error" class="state-box error">{{ error }}</div>
+    <div *ngIf="successMessage" class="state-box success">{{ successMessage }}</div>
+
+    <div *ngIf="showForm" class="form-card">
+      <div class="form-header">
+        <h3>{{ selectedUser ? 'Update user' : 'Create user' }}</h3>
+        <button class="ghost-btn" type="button" (click)="closeForm()">Close</button>
+      </div>
+
+      <form (ngSubmit)="saveUser()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" name="username" [(ngModel)]="userForm.username" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" [(ngModel)]="userForm.email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" name="role" [(ngModel)]="userForm.role">
+              <option value="USER">User</option>
+              <option value="ADMIN">Admin</option>
+              <option value="SUPER_ADMIN">Superadmin</option>
+            </select>
+          </div>
+
+          <div class="form-group" *ngIf="!selectedUser">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" [(ngModel)]="userForm.password" required />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="ghost-btn" type="button" (click)="closeForm()">Cancel</button>
+          <button class="secondary-btn" type="submit" [disabled]="isSaving">
+            {{ isSaving ? 'Saving...' : selectedUser ? 'Update user' : 'Create user' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="!showForm">
+      <div *ngIf="users.length === 0" class="state-box empty">No users found for this tenant.</div>
+      <div *ngIf="users.length > 0" class="tenant-grid">
+        <article class="tenant-card" *ngFor="let user of users">
+          <div class="tenant-top">
+            <span class="status-pill">{{ user.role }}</span>
+            <span class="tenant-id">#{{ user.id }}</span>
+          </div>
+          <h4>{{ user.username }}</h4>
+          <p class="domain">{{ user.email }}</p>
+          <div class="tenant-footer">
+            <span>Tenant ID: {{ tenantId }}</span>
+            <button class="mini-btn" type="button" (click)="openEditForm(user)">Edit</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>
