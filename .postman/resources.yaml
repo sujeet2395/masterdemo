@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: 77c89299-253b-4871-98c0-af08a0a8f26c
+
+localResources:
+  specs:
+    - ../projects_learning_docs/OPENAPI_SCHEMA.yaml
